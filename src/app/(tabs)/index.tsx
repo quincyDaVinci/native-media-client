@@ -1,6 +1,6 @@
+import { login } from "@/api/auth";
+import { loadSession, saveSession } from "@/utils/sessionStorage";
 import { Button, Text, View } from "react-native";
-import { login } from "../../api/auth";
-import { saveSession } from "../../utils/sessionStorage";
 
 export default function HomeScreen() {
   async function handleTestLogin() {
@@ -12,6 +12,11 @@ export default function HomeScreen() {
       });
 
       await saveSession(JSON.stringify(session));
+      const saved = await loadSession();
+      console.log(saved);
+      const parsed = JSON.parse(saved!);
+      console.log(parsed.sessionToken);
+
       console.log("Session saved:", session);
     } catch (err) {
       console.log("Login error:", err);
