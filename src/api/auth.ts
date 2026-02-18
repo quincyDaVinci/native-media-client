@@ -29,7 +29,7 @@ export async function login(params: LoginParams): Promise<Session> {
 
   return {
     baseUrl,
-    token: data.AccessToken,
+    sessionToken: data.AccessToken,
     userId: data.User.Id,
   };
 }
