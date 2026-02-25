@@ -1,22 +1,28 @@
+import { VinylType } from "@/types/VinylType";
 import { useRouter } from "expo-router";
-import React from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import React, { useCallback, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
-
-const vinyls = [
-  {
-    id: 1,
-    title: "The Dark Side of the Moon",
-    artist: "Pink Floyd",
-  },
-  {
-    id: 2,
-    title: "Abbey Road",
-    artist: "The Beatles",
-  },
-];
 
 export default function VinylList() {
   const router = useRouter();
+
+  const database = useSQLiteContext();
+
+  const fetchVinyls = async () => {
+    const result = await database.getAllAsync<VinylType>(
+      "SELECT * FROM vinyls",
+    );
+    setData(result);
+  };
+
+  const [vinyls, setData] = useState<VinylType[]>([]);
+
+  React.useEffect(
+    useCallback(() => {
+      fetchVinyls();
+    }, []),
+  );
 
   return (
     <View style={{ padding: 15 }}>
