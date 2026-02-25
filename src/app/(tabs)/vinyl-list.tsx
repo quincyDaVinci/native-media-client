@@ -18,25 +18,21 @@ const vinyls = [
 export default function VinylList() {
   const router = useRouter();
 
-  function onPressFunction(vinylId: string) {
-    router.push(`/vinyl-details/${vinylId}`);
-  }
-
   return (
-    <View style={{ flex: 1, padding: 16, marginTop: 20 }}>
+    <View style={{ padding: 15 }}>
       <FlatList
         data={vinyls}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => onPressFunction(item.id.toString())}
+            onPress={() => router.push(`/vinyl-details/${item.id}`)}
             style={{
               padding: 16,
               borderBottomWidth: 1,
               borderBottomColor: "#ccc",
             }}
           >
-            <Text>{item.title}</Text>
+            <Text style={{ fontSize: 16 }}>{item.title}</Text>
             <Text style={{ color: "#888", fontSize: 12 }}>{item.artist}</Text>
           </Pressable>
         )}
