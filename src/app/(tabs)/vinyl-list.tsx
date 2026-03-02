@@ -9,14 +9,14 @@ export default function VinylList() {
 
   const database = useSQLiteContext();
 
+  const [vinyls, setData] = useState<VinylType[]>([]);
+
   const fetchVinyls = async () => {
     const result = await database.getAllAsync<VinylType>(
       "SELECT * FROM vinyls",
     );
     setData(result);
   };
-
-  const [vinyls, setData] = useState<VinylType[]>([]);
 
   React.useEffect(
     useCallback(() => {
