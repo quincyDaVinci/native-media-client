@@ -1,14 +1,8 @@
+import { createDbIfNeeded } from "@/features/db/schema";
 import { Stack } from "expo-router";
-import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
+import { SQLiteProvider } from "expo-sqlite";
 
 const RootLayout = () => {
-  const createDbIfNeeded = async (db: SQLiteDatabase) => {
-    console.log("Creating database if needed...");
-    await db.execAsync(
-      `CREATE TABLE IF NOT EXISTS vinyls (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, artist TEXT)`,
-    );
-  };
-
   return (
     <SQLiteProvider databaseName="vinyls.db" onInit={createDbIfNeeded}>
       <Stack>

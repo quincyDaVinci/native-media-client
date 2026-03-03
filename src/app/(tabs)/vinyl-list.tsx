@@ -1,28 +1,11 @@
-import { VinylType } from "@/types/VinylType";
+import { useVinyls } from "@/hooks/useVinyls";
 import { useRouter } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 
 export default function VinylList() {
   const router = useRouter();
-
-  const database = useSQLiteContext();
-
-  const [vinyls, setData] = useState<VinylType[]>([]);
-
-  const fetchVinyls = async () => {
-    const result = await database.getAllAsync<VinylType>(
-      "SELECT * FROM vinyls",
-    );
-    setData(result);
-  };
-
-  React.useEffect(
-    useCallback(() => {
-      fetchVinyls();
-    }, []),
-  );
+  const { vinyls } = useVinyls();
 
   return (
     <View style={{ padding: 15 }}>
