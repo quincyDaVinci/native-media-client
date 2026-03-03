@@ -1,11 +1,18 @@
 import { useVinyls } from "@/hooks/useVinyls";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useCallback } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 
 export default function VinylList() {
   const router = useRouter();
-  const { vinyls } = useVinyls();
+  const { vinyls, fetchVinyls } = useVinyls();
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchVinyls();
+    }, []),
+  );
 
   return (
     <View style={{ padding: 15 }}>

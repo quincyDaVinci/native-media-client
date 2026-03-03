@@ -1,12 +1,20 @@
 import { useVinyl } from "@/hooks/useVinyl";
+import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback } from "react";
 import { Pressable, Text, View } from "react-native";
 
 export default function VinylDetailsScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
-  const { item, handleDelete } = useVinyl(Number(id));
+  const { item, handleDelete, fetchVinyl } = useVinyl(Number(id));
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchVinyl();
+    }, []),
+  );
 
   return (
     <View>
