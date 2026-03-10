@@ -42,12 +42,24 @@ const updateVinyl = (
   ]);
 };
 
+const updateVinylCover = (
+  db: SQLiteDatabase,
+  id: number,
+  coverPath: string,
+) => {
+  return db.runAsync("UPDATE vinyls SET coverPath = ? WHERE id = ?", [
+    coverPath,
+    id,
+  ]);
+};
+
 export {
-    createVinyl,
-    deleteVinylById,
-    getAllVinyls,
-    getVinylBasicById,
-    getVinylById,
-    updateVinyl
+  createVinyl,
+  deleteVinylById,
+  getAllVinyls,
+  getVinylBasicById,
+  getVinylById,
+  updateVinyl,
+  updateVinylCover
 };
 
