@@ -47,6 +47,7 @@ const updateVinylCover = (
   id: number,
   coverPath: string,
 ) => {
+  console.log("[cover] repo.updateVinylCover", { id, coverPath });
   return db.runAsync("UPDATE vinyls SET coverPath = ? WHERE id = ?", [
     coverPath,
     id,

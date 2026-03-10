@@ -15,7 +15,9 @@ export function useVinyl(id: number) {
   const [item, setData] = useState<VinylType | null>(null);
 
   const fetchVinyl = async () => {
+    console.log("[cover] useVinyl.fetchVinyl", { id });
     const result = await getVinylById(database, id);
+    console.log("[cover] useVinyl.fetchVinyl result", result);
     if (result.length > 0) {
       setData(result[0]);
     } else {

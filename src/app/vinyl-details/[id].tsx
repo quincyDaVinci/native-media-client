@@ -17,25 +17,36 @@ export default function VinylDetailsScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      console.log("[cover] detail screen focused, fetching vinyl", { vinylId });
       fetchVinyl();
     }, []),
   );
 
   const handleCoverPick = async () => {
+    console.log("[cover] handleCoverPick triggered", { vinylId });
     if (Number.isNaN(vinylId)) {
+      console.log("[cover] invalid vinylId, aborting");
       return;
     }
 
     try {
       const coverPath = await pickAndStoreCover(vinylId);
+      console.log("[cover] pickAndStoreCover returned", { coverPath });
 
       if (!coverPath) {
+        console.log("[cover] no coverPath returned, stop");
         return;
       }
 
-      await updateVinylCover(database, vinylId, coverPath);
+      const updateResult = await updateVinylCover(database, vinylId, coverPath);
+      console.log("[cover] updateVinylCover result", {
+        changes: updateResult.changes,
+        lastInsertRowId: updateResult.lastInsertRowId,
+      });
       await fetchVinyl();
-    } catch {
+      console.log("[cover] fetchVinyl done after update");
+    } catch (error) {
+      console.error("[cover] failed while saving cover", error);
       Alert.alert("Could not save cover image", "Please try again.");
     }
   };
@@ -49,6 +60,11 @@ export default function VinylDetailsScreen() {
   }
 
   const coverUri = getCoverUri(item.coverPath);
+  console.log("[cover] rendering detail", {
+    id: item.id,
+    coverPath: item.coverPath,
+    coverUri,
+  });
 
   return (
     <View style={{ flex: 1, padding: 16, gap: 12 }}>

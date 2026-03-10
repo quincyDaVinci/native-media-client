@@ -1,10 +1,18 @@
-import * as FileSystem from "expo-file-system";
+import {
+  copyAsync,
+  documentDirectory,
+  getInfoAsync,
+  makeDirectoryAsync,
+} from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
 
 export async function pickAndStoreCover(vinylId: number) {
+  console.log("[cover] start pickAndStoreCover", { vinylId });
   const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  console.log("[cover] media permission", permission);
 
   if (!permission.granted) {
+    console.log("[cover] permission denied");
     return null;
   }
 
@@ -13,45 +21,64 @@ export async function pickAndStoreCover(vinylId: number) {
     allowsEditing: true,
     quality: 0.8,
   });
+  console.log("[cover] picker result canceled?", result.canceled);
 
   if (result.canceled) {
+    console.log("[cover] user canceled image picking");
     return null;
   }
 
-  if (!FileSystem.documentDirectory) {
+  if (!documentDirectory) {
+    console.log("[cover] documentDirectory is missing");
     return null;
   }
 
   const pickedImage = result.assets[0];
-  const coversDir = `${FileSystem.documentDirectory}covers/`;
+  console.log("[cover] picked image", {
+    uri: pickedImage.uri,
+    fileName: pickedImage.fileName,
+    width: pickedImage.width,
+    height: pickedImage.height,
+  });
+  const coversDir = `${documentDirectory}covers/`;
   const relativePath = `covers/${vinylId}.jpg`;
-  const newPath = `${FileSystem.documentDirectory}${relativePath}`;
+  const newPath = `${documentDirectory}${relativePath}`;
+  console.log("[cover] paths", { coversDir, relativePath, newPath });
 
-  const dirInfo = await FileSystem.getInfoAsync(coversDir);
+  const dirInfo = await getInfoAsync(coversDir);
+  console.log("[cover] covers dir info", dirInfo);
   if (!dirInfo.exists) {
-    await FileSystem.makeDirectoryAsync(coversDir, { intermediates: true });
+    await makeDirectoryAsync(coversDir, { intermediates: true });
+    console.log("[cover] created covers directory");
   }
 
-  await FileSystem.copyAsync({
+  await copyAsync({
     from: pickedImage.uri,
     to: newPath,
   });
+  console.log("[cover] copied image to local file");
 
   return relativePath;
 }
 
 export function getCoverUri(coverPath?: string | null) {
+  console.log("[cover] getCoverUri input", { coverPath });
   if (!coverPath) {
+    console.log("[cover] getCoverUri -> null (no coverPath)");
     return null;
   }
 
   if (coverPath.startsWith("file://")) {
+    console.log("[cover] getCoverUri -> absolute uri");
     return coverPath;
   }
 
-  if (!FileSystem.documentDirectory) {
+  if (!documentDirectory) {
+    console.log("[cover] getCoverUri -> null (documentDirectory missing)");
     return null;
   }
 
-  return `${FileSystem.documentDirectory}${coverPath}`;
+  const uri = `${documentDirectory}${coverPath}`;
+  console.log("[cover] getCoverUri -> built uri", { uri });
+  return uri;
 }
