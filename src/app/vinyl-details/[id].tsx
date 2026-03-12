@@ -1,11 +1,12 @@
 import { updateVinylCover } from "@/features/db/vinylRepo";
 import { useVinyl } from "@/hooks/useVinyl";
+import { AppTheme } from "@/theme/appTheme";
 import { getCoverUri, pickAndStoreCover } from "@/utils/pickAndStoreCover";
 import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback } from "react";
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function VinylDetailsScreen() {
   const database = useSQLiteContext();
@@ -53,8 +54,8 @@ export default function VinylDetailsScreen() {
 
   if (!item) {
     return (
-      <View style={{ flex: 1, padding: 16 }}>
-        <Text>Vinyl not found.</Text>
+      <View style={styles.notFoundContainer}>
+        <Text style={styles.notFoundText}>Vinyl not found.</Text>
       </View>
     );
   }
@@ -67,49 +68,158 @@ export default function VinylDetailsScreen() {
   });
 
   return (
-    <View style={{ flex: 1, padding: 16, gap: 12 }}>
-      <Text style={{ fontSize: 20, fontWeight: "600" }}>{item.title}</Text>
-      <Text style={{ color: "#555" }}>{item.artist}</Text>
+    <View style={styles.screen}>
+      <View style={styles.coverBlock}>
+        {coverUri ? (
+          <Image source={{ uri: coverUri }} style={styles.coverImage} />
+        ) : (
+          <View style={styles.coverPlaceholder}>
+            <Text style={styles.coverPlaceholderText}>No cover selected</Text>
+          </View>
+        )}
+      </View>
 
-      {coverUri ? (
-        <Image
-          source={{ uri: coverUri }}
-          style={{ width: 220, height: 220, borderRadius: 8, backgroundColor: "#eee" }}
-        />
-      ) : (
-        <View
-          style={{
-            width: 220,
-            height: 220,
-            borderRadius: 8,
-            backgroundColor: "#eee",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+      <View style={styles.metaBlock}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.artist}>{item.artist}</Text>
+      </View>
+
+      <View style={styles.actions}>
+        <Pressable onPress={handleCoverPick} style={({ pressed }) => [
+          styles.actionButtonBase,
+          styles.actionButtonPrimary,
+          pressed && styles.actionPressed,
+        ]}>
+          <Text style={[styles.actionButtonText, styles.actionButtonTextPrimary]}>
+            {coverUri ? "Change cover" : "Add cover"}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => router.push(`/modal?id=${item.id}`)}
+          style={({ pressed }) => [
+            styles.actionButtonBase,
+            styles.actionButtonSecondary,
+            pressed && styles.actionPressed,
+          ]}
         >
-          <Text>No cover selected</Text>
-        </View>
-      )}
+          <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>Edit</Text>
+        </Pressable>
 
-      <Pressable onPress={handleCoverPick} style={{ marginTop: 8 }}>
-        <Text style={{ color: "#007AFF", fontSize: 16 }}>
-          {coverUri ? "Change cover" : "Add cover"}
-        </Text>
-      </Pressable>
-
-      <Pressable onPress={() => router.push(`/modal?id=${item.id}`)} style={{ marginTop: 8 }}>
-        <Text style={{ color: "#007AFF", fontSize: 16 }}>Edit</Text>
-      </Pressable>
-
-      <Pressable
-        onPress={async () => {
-          await handleDelete(item.id);
-          router.back();
-        }}
-        style={{ marginTop: 8 }}
-      >
-        <Text style={{ color: "#C62828", fontSize: 16 }}>Delete</Text>
-      </Pressable>
+        <Pressable
+          onPress={async () => {
+            await handleDelete(item.id);
+            router.back();
+          }}
+          style={({ pressed }) => [
+            styles.actionButtonBase,
+            styles.actionButtonDanger,
+            pressed && styles.actionPressed,
+          ]}
+        >
+          <Text style={[styles.actionButtonText, styles.actionButtonTextDanger]}>Delete</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: AppTheme.colors.background,
+    padding: AppTheme.spacing.lg,
+    gap: AppTheme.spacing.lg,
+  },
+  notFoundContainer: {
+    flex: 1,
+    backgroundColor: AppTheme.colors.background,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: AppTheme.spacing.lg,
+  },
+  notFoundText: {
+    color: AppTheme.colors.textSecondary,
+    fontSize: AppTheme.typography.subtitle,
+  },
+  coverBlock: {
+    alignItems: "center",
+  },
+  coverImage: {
+    width: 240,
+    height: 240,
+    borderRadius: AppTheme.radius.lg,
+    backgroundColor: AppTheme.colors.surfaceAlt,
+    borderWidth: AppTheme.borderWidth.thin,
+    borderColor: AppTheme.colors.border,
+  },
+  coverPlaceholder: {
+    width: 240,
+    height: 240,
+    borderRadius: AppTheme.radius.lg,
+    backgroundColor: AppTheme.colors.surfaceAlt,
+    borderWidth: AppTheme.borderWidth.thin,
+    borderColor: AppTheme.colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  coverPlaceholderText: {
+    color: AppTheme.colors.textMuted,
+    fontSize: AppTheme.typography.body,
+  },
+  metaBlock: {
+    backgroundColor: AppTheme.colors.surface,
+    borderRadius: AppTheme.radius.lg,
+    borderWidth: AppTheme.borderWidth.thin,
+    borderColor: AppTheme.colors.border,
+    padding: AppTheme.spacing.lg,
+    gap: AppTheme.spacing.xs,
+    ...AppTheme.shadows.card,
+  },
+  title: {
+    color: AppTheme.colors.textPrimary,
+    fontSize: AppTheme.typography.title,
+    fontWeight: "700",
+  },
+  artist: {
+    color: AppTheme.colors.textSecondary,
+    fontSize: AppTheme.typography.subtitle,
+  },
+  actions: {
+    gap: AppTheme.spacing.sm,
+  },
+  actionButtonBase: {
+    borderRadius: AppTheme.radius.md,
+    borderWidth: AppTheme.borderWidth.thin,
+    paddingVertical: AppTheme.spacing.md,
+    alignItems: "center",
+  },
+  actionButtonPrimary: {
+    backgroundColor: AppTheme.buttons.primary.backgroundColor,
+    borderColor: AppTheme.buttons.primary.borderColor,
+  },
+  actionButtonSecondary: {
+    backgroundColor: AppTheme.buttons.secondary.backgroundColor,
+    borderColor: AppTheme.buttons.secondary.borderColor,
+  },
+  actionButtonDanger: {
+    backgroundColor: AppTheme.buttons.danger.backgroundColor,
+    borderColor: AppTheme.buttons.danger.borderColor,
+  },
+  actionButtonText: {
+    fontSize: AppTheme.typography.button,
+    fontWeight: "700",
+  },
+  actionButtonTextPrimary: {
+    color: AppTheme.buttons.primary.textColor,
+  },
+  actionButtonTextSecondary: {
+    color: AppTheme.buttons.secondary.textColor,
+  },
+  actionButtonTextDanger: {
+    color: AppTheme.buttons.danger.textColor,
+  },
+  actionPressed: {
+    opacity: 0.8,
+  },
+});

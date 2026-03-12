@@ -1,26 +1,77 @@
+import { AppTheme } from "@/theme/appTheme";
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
   const headerRight = () => {
     return (
       <Pressable
         onPress={() => router.push("/modal")}
-        style={{ marginRight: 16 }}
+        style={({ pressed }) => [
+          styles.headerAction,
+          pressed && styles.headerActionPressed,
+        ]}
       >
-        <FontAwesome name="plus-circle" size={28} color="#007AFF" />
+        <FontAwesome
+          name="plus-circle"
+          size={26}
+          color={AppTheme.colors.accent}
+        />
       </Pressable>
     );
   };
+
   return (
-    <View>
+    <View style={styles.screen}>
       <Stack.Screen options={{ headerRight }} />
-      <View style={{ padding: 16, gap: 12 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-          Welcome to the Home Screen!
+      <View style={styles.heroCard}>
+        <Text style={styles.heroTitle}>Vinyl Collection</Text>
+        <Text style={styles.heroSubtitle}>
+          A simple offline space to collect and manage your records.
+        </Text>
+        <Text style={styles.heroHint}>
+          Use the plus button in the header to add a new vinyl.
         </Text>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: AppTheme.colors.background,
+    padding: AppTheme.spacing.lg,
+  },
+  headerAction: {
+    marginRight: AppTheme.spacing.md,
+    borderRadius: AppTheme.radius.pill,
+  },
+  headerActionPressed: {
+    opacity: 0.75,
+  },
+  heroCard: {
+    backgroundColor: AppTheme.colors.surface,
+    borderRadius: AppTheme.radius.lg,
+    borderWidth: AppTheme.borderWidth.thin,
+    borderColor: AppTheme.colors.border,
+    padding: AppTheme.spacing.xl,
+    gap: AppTheme.spacing.md,
+    ...AppTheme.shadows.card,
+  },
+  heroTitle: {
+    fontSize: AppTheme.typography.hero,
+    fontWeight: "700",
+    color: AppTheme.colors.textPrimary,
+  },
+  heroSubtitle: {
+    fontSize: AppTheme.typography.subtitle,
+    color: AppTheme.colors.textSecondary,
+    lineHeight: 22,
+  },
+  heroHint: {
+    fontSize: AppTheme.typography.body,
+    color: AppTheme.colors.textMuted,
+  },
+});
