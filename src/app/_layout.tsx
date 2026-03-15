@@ -11,7 +11,10 @@ const RootLayout = () => {
           contentStyle: { backgroundColor: AppTheme.colors.background },
           headerStyle: { backgroundColor: AppTheme.colors.background },
           headerTintColor: AppTheme.colors.textPrimary,
-          headerTitleStyle: { fontSize: AppTheme.typography.subtitle, fontWeight: "700" },
+          headerTitleStyle: {
+            fontSize: AppTheme.typography.subtitle,
+            fontWeight: "700",
+          },
           headerShadowVisible: false,
         }}
       >
@@ -26,6 +29,7 @@ const RootLayout = () => {
           options={{
             headerTitle: "Vinyl Details",
             title: "Vinyl Details",
+            headerStyle: { backgroundColor: AppTheme.colors.background },
           }}
         />
         <Stack.Screen
