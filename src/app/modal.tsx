@@ -25,12 +25,16 @@ export default function ModalScreen() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <Stack.Screen options={{ headerTitle: editMode ? "Edit Vinyl" : "Add New Vinyl" }} />
+      <Stack.Screen
+        options={{
+          headerTitle: editMode ? "Wijzigen Vinyl" : "Vinyl Toevoegen",
+        }}
+      />
       <View style={styles.form}>
         <View style={styles.field}>
-          <Text style={styles.label}>Title</Text>
+          <Text style={styles.label}>Titel</Text>
           <TextInput
-            placeholder="Enter vinyl title"
+            placeholder="Voeg vinyl titel toe"
             placeholderTextColor={AppTheme.colors.textMuted}
             value={title}
             onChangeText={setTitle}
@@ -39,9 +43,9 @@ export default function ModalScreen() {
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.label}>Artist</Text>
+          <Text style={styles.label}>Artiest</Text>
           <TextInput
-            placeholder="Enter artist name"
+            placeholder="Voeg artiest naam toe"
             placeholderTextColor={AppTheme.colors.textMuted}
             value={artist}
             onChangeText={setArtist}
@@ -51,12 +55,15 @@ export default function ModalScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Pressable onPress={onPress} style={({ pressed }) => [
-          styles.submitButton,
-          pressed && styles.submitButtonPressed,
-        ]}>
+        <Pressable
+          onPress={onPress}
+          style={({ pressed }) => [
+            styles.submitButton,
+            pressed && styles.submitButtonPressed,
+          ]}
+        >
           <Text style={styles.submitButtonText}>
-            {editMode ? "Update Vinyl" : "Save Vinyl"}
+            {editMode ? "Wijzigen" : "Opslaan"}
           </Text>
         </Pressable>
       </View>

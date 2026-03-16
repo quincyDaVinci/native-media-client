@@ -74,7 +74,9 @@ export default function VinylDetailsScreen() {
           <Image source={{ uri: coverUri }} style={styles.coverImage} />
         ) : (
           <View style={styles.coverPlaceholder}>
-            <Text style={styles.coverPlaceholderText}>No cover selected</Text>
+            <Text style={styles.coverPlaceholderText}>
+              Geen afbeelding beschikbaar
+            </Text>
           </View>
         )}
       </View>
@@ -85,13 +87,18 @@ export default function VinylDetailsScreen() {
       </View>
 
       <View style={styles.actions}>
-        <Pressable onPress={handleCoverPick} style={({ pressed }) => [
-          styles.actionButtonBase,
-          styles.actionButtonPrimary,
-          pressed && styles.actionPressed,
-        ]}>
-          <Text style={[styles.actionButtonText, styles.actionButtonTextPrimary]}>
-            {coverUri ? "Change cover" : "Add cover"}
+        <Pressable
+          onPress={handleCoverPick}
+          style={({ pressed }) => [
+            styles.actionButtonBase,
+            styles.actionButtonPrimary,
+            pressed && styles.actionPressed,
+          ]}
+        >
+          <Text
+            style={[styles.actionButtonText, styles.actionButtonTextPrimary]}
+          >
+            {coverUri ? "Wijzigen cover" : "Cover toevoegen"}
           </Text>
         </Pressable>
 
@@ -103,7 +110,11 @@ export default function VinylDetailsScreen() {
             pressed && styles.actionPressed,
           ]}
         >
-          <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>Edit</Text>
+          <Text
+            style={[styles.actionButtonText, styles.actionButtonTextSecondary]}
+          >
+            Wijzigen
+          </Text>
         </Pressable>
 
         <Pressable
@@ -117,7 +128,11 @@ export default function VinylDetailsScreen() {
             pressed && styles.actionPressed,
           ]}
         >
-          <Text style={[styles.actionButtonText, styles.actionButtonTextDanger]}>Delete</Text>
+          <Text
+            style={[styles.actionButtonText, styles.actionButtonTextDanger]}
+          >
+            Verwijderen
+          </Text>
         </Pressable>
       </View>
     </View>

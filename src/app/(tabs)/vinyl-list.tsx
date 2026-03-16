@@ -4,7 +4,14 @@ import { getCoverUri } from "@/utils/pickAndStoreCover";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function VinylList() {
   const router = useRouter();
@@ -24,9 +31,9 @@ export default function VinylList() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>No vinyls yet</Text>
+            <Text style={styles.emptyTitle}>Geen vinyls gevonden</Text>
             <Text style={styles.emptyText}>
-              Add your first record with the plus button in the header.
+              Voeg je eerste vinyl toe met de plusknop in de header.
             </Text>
           </View>
         }
@@ -42,10 +49,7 @@ export default function VinylList() {
               ]}
             >
               {coverUri ? (
-                <Image
-                  source={{ uri: coverUri }}
-                  style={styles.coverImage}
-                />
+                <Image source={{ uri: coverUri }} style={styles.coverImage} />
               ) : (
                 <View style={styles.coverPlaceholder}>
                   <Text style={styles.placeholderText}>No Cover</Text>

@@ -26,12 +26,12 @@ export default function HomeScreen() {
     <View style={styles.screen}>
       <Stack.Screen options={{ headerRight }} />
       <View style={styles.heroCard}>
-        <Text style={styles.heroTitle}>Vinyl Collection</Text>
+        <Text style={styles.heroTitle}>Vinyl Collectie</Text>
         <Text style={styles.heroSubtitle}>
-          A simple offline space to collect and manage your records.
+          Een eenvoudige offline ruimte om je vinyls te verzamelen en beheren.
         </Text>
         <Text style={styles.heroHint}>
-          Use the plus button in the header to add a new vinyl.
+          Gebruik de plusknop in de header om een nieuwe vinyl toe te voegen.
         </Text>
       </View>
     </View>
