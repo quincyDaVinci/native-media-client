@@ -11,6 +11,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
@@ -18,8 +19,19 @@ export default function VinylList() {
   const router = useRouter();
   const { vinyls, fetchVinyls } = useVinyls();
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [isCoverGridMode, setIsCoverGridMode] = useState(false);
-  const visibleVinyls = vinyls;
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const visibleVinyls = vinyls.filter((item) => {
+    if (!normalizedQuery) return true;
+
+    const matchesTitle = item.title.toLowerCase().includes(normalizedQuery);
+    const matchesArtist = item.artist.toLowerCase().includes(normalizedQuery);
+
+    return matchesTitle || matchesArtist;
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -48,6 +60,16 @@ export default function VinylList() {
             }
           />
         </Pressable>
+      </View>
+
+      <View style={styles.searchWrapper}>
+        <TextInput
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Zoek op titel of artiest"
+          placeholderTextColor={AppTheme.colors.textMuted}
+          style={styles.searchInput}
+        />
       </View>
 
       <FlatList
@@ -198,7 +220,7 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: AppTheme.colors.textMuted,
     fontSize: AppTheme.typography.caption,
-    fontWeight: "600",
+    fontWeight: "700",
   },
   meta: {
     flex: 1,
@@ -257,5 +279,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: AppTheme.colors.surfaceAlt,
+  },
+  searchWrapper: {
+    marginBottom: AppTheme.spacing.xl,
+  },
+  searchInput: {
+    backgroundColor: AppTheme.colors.surface,
+    borderRadius: AppTheme.radius.lg,
+    borderWidth: AppTheme.borderWidth.thin,
+    borderColor: AppTheme.colors.border,
+    paddingHorizontal: AppTheme.spacing.md,
+    paddingVertical: AppTheme.spacing.md,
+    color: AppTheme.colors.textPrimary,
+    fontSize: AppTheme.typography.body,
+    ...AppTheme.shadows.card,
   },
 });
