@@ -1,9 +1,10 @@
 import { useVinyls } from "@/hooks/useVinyls";
 import { AppTheme } from "@/theme/appTheme";
 import { getCoverUri } from "@/utils/pickAndStoreCover";
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   FlatList,
   Image,
@@ -17,6 +18,12 @@ export default function VinylList() {
   const router = useRouter();
   const { vinyls, fetchVinyls } = useVinyls();
 
+  const [onlyWithCover, setOnlyWithCover] = useState(false);
+  const isCoverGridMode = onlyWithCover;
+  const filteredVinyls = onlyWithCover
+    ? vinyls.filter((item) => Boolean(item.coverPath))
+    : vinyls;
+
   useFocusEffect(
     useCallback(() => {
       fetchVinyls();
@@ -25,20 +32,73 @@ export default function VinylList() {
 
   return (
     <View style={styles.screen}>
+      <View style={styles.toolbar}>
+        <Pressable
+          onPress={() => setOnlyWithCover((prev) => !prev)}
+          style={({ pressed }) => [
+            styles.iconButton,
+            onlyWithCover && styles.iconButtonActive,
+            pressed && styles.iconButtonPressed,
+          ]}
+        >
+          <Ionicons
+            name={onlyWithCover ? "images" : "images-outline"}
+            size={20}
+            color={
+              onlyWithCover
+                ? AppTheme.colors.background
+                : AppTheme.colors.textPrimary
+            }
+          />
+        </Pressable>
+      </View>
+
       <FlatList
-        data={vinyls}
+        key={isCoverGridMode ? "grid" : "list"}
+        data={filteredVinyls}
+        numColumns={isCoverGridMode ? 2 : 1}
+        columnWrapperStyle={isCoverGridMode ? styles.gridRow : undefined}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>Geen vinyls gevonden</Text>
+            <Text style={styles.emptyTitle}>
+              {vinyls.length === 0
+                ? "Geen vinyls gevonden"
+                : "Geen vinyls met cover gevonden"}
+            </Text>
+
             <Text style={styles.emptyText}>
-              Voeg je eerste vinyl toe met de plusknop in de header.
+              {vinyls.length === 0
+                ? "Voeg je eerste vinyl toe met de plusknop in de header."
+                : "Zet het filter uit of voeg covers toe aan je vinyls."}
             </Text>
           </View>
         }
         renderItem={({ item }) => {
           const coverUri = getCoverUri(item.coverPath);
+          if (isCoverGridMode) {
+            return (
+              <Pressable
+                onPress={() => router.push(`/vinyl-details/${item.id}`)}
+                style={({ pressed }) => [
+                  styles.gridCard,
+                  pressed && styles.cardPressed,
+                ]}
+              >
+                {coverUri ? (
+                  <Image
+                    source={{ uri: coverUri }}
+                    style={styles.gridCoverImage}
+                  />
+                ) : (
+                  <View style={styles.gridCoverPlaceholder}>
+                    <Text style={styles.placeholderText}>No Cover</Text>
+                  </View>
+                )}
+              </Pressable>
+            );
+          }
 
           return (
             <Pressable
@@ -152,5 +212,50 @@ const styles = StyleSheet.create({
   artist: {
     color: AppTheme.colors.textSecondary,
     fontSize: AppTheme.typography.body,
+  },
+  toolbar: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: AppTheme.spacing.md,
+  },
+  iconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: AppTheme.radius.pill,
+    backgroundColor: AppTheme.colors.surface,
+    borderWidth: AppTheme.borderWidth.thin,
+    borderColor: AppTheme.colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+    ...AppTheme.shadows.card,
+  },
+  iconButtonActive: {
+    backgroundColor: AppTheme.colors.textPrimary,
+  },
+  iconButtonPressed: {
+    opacity: 0.8,
+  },
+  gridRow: {
+    gap: AppTheme.spacing.md,
+  },
+  gridCard: {
+    flex: 1,
+    aspectRatio: 1,
+    borderRadius: AppTheme.radius.lg,
+    overflow: "hidden",
+    backgroundColor: AppTheme.colors.surface,
+    borderWidth: AppTheme.borderWidth.thin,
+    borderColor: AppTheme.colors.border,
+    ...AppTheme.shadows.card,
+  },
+  gridCoverImage: {
+    width: "100%",
+    height: "100%",
+  },
+  gridCoverPlaceholder: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: AppTheme.colors.surfaceAlt,
   },
 });
