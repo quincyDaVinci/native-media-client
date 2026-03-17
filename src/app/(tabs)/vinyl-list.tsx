@@ -18,11 +18,8 @@ export default function VinylList() {
   const router = useRouter();
   const { vinyls, fetchVinyls } = useVinyls();
 
-  const [onlyWithCover, setOnlyWithCover] = useState(false);
-  const isCoverGridMode = onlyWithCover;
-  const filteredVinyls = onlyWithCover
-    ? vinyls.filter((item) => Boolean(item.coverPath))
-    : vinyls;
+  const [isCoverGridMode, setIsCoverGridMode] = useState(false);
+  const visibleVinyls = vinyls;
 
   useFocusEffect(
     useCallback(() => {
@@ -34,18 +31,18 @@ export default function VinylList() {
     <View style={styles.screen}>
       <View style={styles.toolbar}>
         <Pressable
-          onPress={() => setOnlyWithCover((prev) => !prev)}
+          onPress={() => setIsCoverGridMode((prev) => !prev)}
           style={({ pressed }) => [
             styles.iconButton,
-            onlyWithCover && styles.iconButtonActive,
+            isCoverGridMode && styles.iconButtonActive,
             pressed && styles.iconButtonPressed,
           ]}
         >
           <Ionicons
-            name={onlyWithCover ? "images" : "images-outline"}
+            name={isCoverGridMode ? "images" : "images-outline"}
             size={20}
             color={
-              onlyWithCover
+              isCoverGridMode
                 ? AppTheme.colors.background
                 : AppTheme.colors.textPrimary
             }
@@ -55,7 +52,7 @@ export default function VinylList() {
 
       <FlatList
         key={isCoverGridMode ? "grid" : "list"}
-        data={filteredVinyls}
+        data={visibleVinyls}
         numColumns={isCoverGridMode ? 2 : 1}
         columnWrapperStyle={isCoverGridMode ? styles.gridRow : undefined}
         keyExtractor={(item) => item.id.toString()}
@@ -93,7 +90,10 @@ export default function VinylList() {
                   />
                 ) : (
                   <View style={styles.gridCoverPlaceholder}>
-                    <Text style={styles.placeholderText}>No Cover</Text>
+                    <Text style={styles.placeholderText} numberOfLines={2}>
+                      {item.title}
+                      {`\n- ${item.artist}`}
+                    </Text>
                   </View>
                 )}
               </Pressable>
@@ -112,7 +112,7 @@ export default function VinylList() {
                 <Image source={{ uri: coverUri }} style={styles.coverImage} />
               ) : (
                 <View style={styles.coverPlaceholder}>
-                  <Text style={styles.placeholderText}>No Cover</Text>
+                  <Text style={styles.placeholderText}>Geen cover</Text>
                 </View>
               )}
 
