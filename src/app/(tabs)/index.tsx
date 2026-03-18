@@ -1,9 +1,25 @@
+import { useVinyls } from "@/hooks/useVinyls";
 import { AppTheme } from "@/theme/appTheme";
 import { FontAwesome } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { Stack, router } from "expo-router";
+import React, { useCallback } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
+  const { vinyls, fetchVinyls } = useVinyls();
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchVinyls();
+    }, []),
+  );
+
+  const totalVinyls = vinyls.length;
+  const vinylsWithCover = vinyls.filter((item) =>
+    Boolean(item.coverPath),
+  ).length;
+
   const headerRight = () => {
     return (
       <Pressable
@@ -33,6 +49,18 @@ export default function HomeScreen() {
         <Text style={styles.heroHint}>
           Gebruik de plusknop in de header om een nieuwe vinyl toe te voegen.
         </Text>
+      </View>
+
+      <View style={styles.statsRow}>
+        <View style={styles.statCard}>
+          <Text style={styles.statValue}>{totalVinyls}</Text>
+          <Text style={styles.statLabel}>Totaal vinyls</Text>
+        </View>
+
+        <View style={styles.statCard}>
+          <Text style={styles.statValue}>{vinylsWithCover}</Text>
+          <Text style={styles.statLabel}>Met cover</Text>
+        </View>
       </View>
     </View>
   );
@@ -73,5 +101,29 @@ const styles = StyleSheet.create({
   heroHint: {
     fontSize: AppTheme.typography.body,
     color: AppTheme.colors.textMuted,
+  },
+  statsRow: {
+    flexDirection: "row",
+    gap: AppTheme.spacing.md,
+    marginTop: AppTheme.spacing.lg,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: AppTheme.colors.surface,
+    borderRadius: AppTheme.radius.lg,
+    borderWidth: AppTheme.borderWidth.thin,
+    borderColor: AppTheme.colors.border,
+    padding: AppTheme.spacing.lg,
+    gap: AppTheme.spacing.xs,
+    ...AppTheme.shadows.card,
+  },
+  statValue: {
+    fontSize: AppTheme.typography.hero,
+    fontWeight: "700",
+    color: AppTheme.colors.textPrimary,
+  },
+  statLabel: {
+    fontSize: AppTheme.typography.body,
+    color: AppTheme.colors.textSecondary,
   },
 });
